@@ -1,0 +1,6 @@
+[GIT]
+MinVer=20
+Type=Repositories
+[Repositories]
+0=AppSnap"DING"
+1=AppSnap"FLIM"

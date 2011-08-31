@@ -1,0 +1,177 @@
+=======================
+GetIt - Version History
+=======================
+
+You can help:
+-Does FreewareUpdater have commandline support? If so, please contact me if you know about this
+
+ToDo:
+-Move AppSnap before AppUpdater (since AppSnap will install newest version)
+-Redo GetIt GUI from scratch into a proper GUI (Show App list right away, File Menu for other features, resizable, every X day reminder to run 'updatedb')
+-.Git files of "Application" type (like a self-contained mini-repository of a single app - no other repositories required to install that app)
+-Look into Unattended, WPKG
+
+No longer planned:
+-Support injecting repositories into Appupdater (currently only AppSnap repositories are supported, little/no demand from people to host their own repositories)
+
+
+===============
+Version History
+===============
+
+>2011.08.30
+-AppSnap is no longer included by default since the repository seems outdated
+-Run 'getit.exe getenginesall' to add AppSnap support
+
+>2009.10.20
+-Fixed GUI not being run by Installer (GUI is the one who does the file association to .git files, so if you never ran it yourself, the start-menu install shortcuts wouldn't have worked)
+
+>2009.10.13 "Quiet"
+--Basically, once it starts installing, it should just keep on setting everything up without any further message boxes, unless there is an update to GetIt
+-No longer asks if you want to install AppSnap/AppUpdater (will always do it, unless already installed)
+-No longer reports which App-Getters were detected (They all better have been, since they were just installed for you, if not existant)
+-No longer runs GUI after install
+-AppSnap is now higher priority than AppUpdater by default (more likely to give you newest version)
+
+>2009.10.08 "Hi Windows 7"
+-You can now install applications from the Windows 7/Vista start menu search (Just search for what you want, click Install)
+-Added start-menu shortcut to Update Repositories
+-Updated auto-downloaded AppUpdater to v1.2.1
+
+>2009.04.12 "Portable"
+-You can now make GetIt portable (just insert your USB Stick and click "Make Portable" in GUI)
+-Added support for installing GetIt to a different drive than where AppSnap/AppUpdater are installed to
+-Fixed getting "====..." application from Appupdater repository (needed to skip 3 lines rather than 2 in applist)
+
+>2009.01.10
+-Fixed installer window being in front of initial 'getengines' message box
+-updatedb: Moved "Downloading Repository" text up to not cut off longer URLs
+
+>2009.01.07 "Chain and Able"
+-Chain Install supported!
+--GUI lets you select multiple applications with Ctrl, then install them all in a row, without pause
+--GUI also lets you create a Batch file of your selected Chain Install for later use
+-getit 'install': getit will now close right after the install is done, even if the cmd log is still visible (No more having to hit Enter to continue install chain)
+-getit 'getengines' will now automatically move into updating your repositories afterwards
+-Updater automatically calls 'getengines' after updates now (which is a good thing to do ;p)
+-Auto-installing AppSnap/Appupdater informs you of why the download failed now, if it failed
+
+[Puchisoft Repository]
+-Added Dispatcher
+-Fixed GetIt version format (not that you are going to install GetIt with GetIt... I hope! ;p)
+
+>2009.01.06
+-GetIt 'getengines' will now offer to download and silently install AppUpdater/AppSnap rather than just opening the website for you
+-getit 'install' can now be run one after another without them running into each other (useful for batch files; this is the groundwork for official installChain support)
+--will also wait for needed app-engine to close before launching it (fixes issue with running multiple single installs seperately)
+-Win-Get removed as a default App-Getting Engine (Its Database has been offline for a while)
+--It's still included: If you want to re-enable it, just add "Win-Get" to the end of your preference.txt 
+-Can now use "installr"/"installu" instead of "installrefresh"/"installupgrade" in FARR (alias change)
+-Added Progress bar when downloading Repositories or things via getit://
+-AppSnap no longer Pauses after updating its main repository (Appupdater didn't either) [Requires running 'getengines' again]
+-Cleaned up GUI, replaced 2nd Quit button with Check For Updates to GetIt
+-Fixed getit.exe not closing in certain cases
+
+>2008.12.03
+-GUI can now be closed using a normal windows X
+-Cleaned up GUI
+
+>2008.11.21
+-Fixed link pointing to AppSnap when asking to download AppUpdater
+
+>2008.08.01
+-Now uses Puchisoft Dispatcher for the Updater
+-Fixed spelling error in GUI
+
+>2007.12.31
+-Added Upgrade Button to GUI
+-Fixed GUI not being closed by installer
+
+>2007.12.24
+-Changed version format to reflect date, which is more meaningful than an arbitrary number
+-Implimented ShipIt One-Click-To-Ship methology in GetIt development process
+
+>0.37 (December 22, 2007)
+-Now supports Appupdater!
+[GetIt.exe]
+-Added support for Appupdater in misc locations
+-Added parameter: upgrade (upgrades with all engines that support it, which is currently only Appupdater)
+-Parameter 'update' can be used instead of typing 'updatedb' now, same functionality
+[FARRv2 Alias]
+-Added 'installupgrade' command, to call 'upgrade'
+
+
+>0.36 (September 18, 2007)
+-Now Open Source (under GPLv3; source included in src/ folder)!
+[GetIt.exe]
+-(updatedb) Now informs you what it's doing
+
+>0.35 (September 13, 2007)
+[GetIt_Gui.exe]
+(Install Application?)
+-Shows info, if possible (download url, website, description)
+(Add Repositories?)
+-Will now ignore Repositories that you already have listed (on add)
+-Added warning to screen
+[Misc]
+-Added GloriousComputing's Repository as a default
+-Fixed default repositories not installing (since .31)
+
+>0.31 (September 12, 2007)
+[GetIt.exe]
+-Fixed install parameter not allowing spaces in App Names
+-Fixed Engine\AppSnap.ini not having Quotes (not supporting apps with spaces)
+
+>0.30 (September 8, 2007)
+[GetIt_Gui.exe]
+(Welcome) 
+-You can now use hot-keys I,U,M,S to jump to those screens
+-Now sets up .git association so that Install isn't the only ability
+-(Repository Manager) You can now move Repositories Up/Down with Ctrl+Up/Down
+(Add Repository?) 
+-First Release
+-Is triggered when opening a .git file of type "Repositories" (Let's you easy add Repositories)
+(Install Application?)
+-First Release
+-This is shown when default running a .git outside the Installs\ folder (like from the internet temp folder)
+-Is bypassed by default for running .git files in Installs\, but you can right-click a .git file and choose "Show" 
+(Install Applcations)
+-Buttom to Show rather than Install an App
+[GetIt.exe]
+-.git files now can be of various types, as defined inside them
+-.git files now have Min Version info, that GetIt will now require
+-(open file)
+-Checks what type of git file it is, redirects to GetIt_Gui as needed
+-AppPointers must be located in Installs\ folder, for security reasons (will open ShowApp gui otherwise)
+-(updatedb) Generates .git files of AppPointer type, with MinVersion info
+-(getengines) "You don't have AppSnap" dialog now notes that it is required for Repositories to work
+-(updatedb) Fixed bug where no further repositories were updated after the first local repository failed to open
+-(show) allows you to look at an app (getit.exe show App)
+[Misc]
+-getit:// protocol is registered now (so you can make links like getit://http://mydomain.com/myfile.git)
+	which is shorthand for downloading, and opening that .git file (Remember: Auto-Installs can't be triggered from .git files outside your Installs\ dir)
+
+>0.20 (September 7, 2007)
+[GetIt.exe]
+-(updatedb) Now supports injecting any number of 3rd party repositories into AppSnap
+-(install) No longer leaves GetIt window open after opening the AppGetter
+[GetIt_Gui.exe]
+(Repository Manager)
+-First release (still lacks ability to change Repository order, use .txt file directly for now)
+[Installer]
+-Always runs GUI after install now, unless it was ran silently (no annoying msg box question)
+-Comes with Puchisoft's 3rd party repository for AppSnap
+
+>0.11 (August 15, 2007)
+[GetIt.exe]
+-(getengines) Friendlier "You don't have AppSnap" dialog
+-(getengines) Hides progress bar in front of MsgBox now, when not finding AppSnap 
+-Not always in "silent" mode now
+-Fixed some (all?) non-closing bugs
+[GetIt_Gui.exe]
+-(First Run) Updates DB itself on first run
+
+>0.10 (August 11, 2007)
+First Release
+
+

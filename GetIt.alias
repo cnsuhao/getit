@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="Legacy" ?>
+<!-- This file defines aliases for use by the Find and Run Robot program (http://www.donationcoder.com/Software/Mouser/findrun/index.html). -->
+<FarrAliasFile>
+    <FileFormatVersion>1</FileFormatVersion>
+    <AliasSetDescription>Alias File For GetIt</AliasSetDescription>
+    <AliasEntry>
+        <AliasText>Install Refresh</AliasText>
+        <Score>1000</Score>
+        <Regex>installrefresh</Regex>
+        <Results>
+            <Result>GetIt - Refresh/Update Repositories | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe updatedb</Result>
+            <Result>GetIt - Upgrade Applications | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe upgrade</Result>
+            <Result>GetIt - Look for newly installed AppGet Engines | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe getengines</Result>
+            <Result>GetIt - GUI | %PROGRAMFILES%\Puchisoft\GetIt\getit_gui.exe</Result>
+        </Results>
+    </AliasEntry>
+	<AliasEntry>
+        <AliasText>Install Refresh</AliasText>
+        <Score>1000</Score>
+        <Regex>installr</Regex>
+        <Results>
+            <Result>GetIt - Refresh/Update Repositories | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe updatedb</Result>
+            <Result>GetIt - Upgrade Applications | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe upgrade</Result>
+            <Result>GetIt - Look for newly installed AppGet Engines | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe getengines</Result>
+            <Result>GetIt - GUI | %PROGRAMFILES%\Puchisoft\GetIt\getit_gui.exe</Result>
+        </Results>
+    </AliasEntry>
+    <AliasEntry>
+            <AliasText>Install Upgrade</AliasText>
+            <Score>1000</Score>
+            <Regex>installupgrade</Regex>
+            <Results>                
+                <Result>GetIt - Upgrade Applications | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe upgrade</Result>
+                <Result>GetIt - Refresh/Update Repositories | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe updatedb</Result>
+                <Result>GetIt - Look for newly installed AppGet Engines | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe getengines</Result>
+                <Result>GetIt - GUI | %PROGRAMFILES%\Puchisoft\GetIt\getit_gui.exe</Result>
+            </Results>
+    </AliasEntry>
+	<AliasEntry>
+            <AliasText>Install Upgrade</AliasText>
+            <Score>1000</Score>
+            <Regex>installu</Regex>
+            <Results>                
+                <Result>GetIt - Upgrade Applications | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe upgrade</Result>
+                <Result>GetIt - Refresh/Update Repositories | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe updatedb</Result>
+                <Result>GetIt - Look for newly installed AppGet Engines | %PROGRAMFILES%\Puchisoft\GetIt\getit.exe getengines</Result>
+                <Result>GetIt - GUI | %PROGRAMFILES%\Puchisoft\GetIt\getit_gui.exe</Result>
+            </Results>
+    </AliasEntry>
+    <AliasEntry>
+        <AliasText>install</AliasText>
+        <Score>1000</Score>
+        <Regex>^install (.*)</Regex>
+        <DefaultSearchText>getIt.alias</DefaultSearchText>
+        <Results>
+            <Result>dosearch %PROGRAMFILES%\Puchisoft\GetIt\Installs\.$$1</Result>
+        </Results>
+    </AliasEntry>
+</FarrAliasFile>

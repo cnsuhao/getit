@@ -1,0 +1,2 @@
+WinGet was created by Ryan Proctor and is not affiliated with GetIt in any way.
+URL: http://windows-get.sourceforge.net/

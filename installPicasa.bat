@@ -1,0 +1,1 @@
+getit install Picasa

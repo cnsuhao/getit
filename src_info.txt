@@ -1,0 +1,16 @@
+The source code is provided under the GPLv3.
+
+>Files
+getIt.nsi is the source for the main getit.exe
+To compile this file, use NSIS: http://nsis.sourceforge.net/Download
+
+gui.mfa is the source for the GetIt_GUI.exe
+To compile this file, you need to use Multimedia Fusion2 Developer: http://clickteam.com/eng/mmf2dev.php
+Unlike .nsi files, this source code is not plain-text and will require the above mentioned program to view.
+
+MakeDataIncludes.nsi creates a timestamp used as a the version number for GetIt. Must be compiled before getIt.nsi.
+
+getIt_Install.nsi is the source for the Setup.exe
+Again, use NSIS to compile this.
+
+-Enjoy!
