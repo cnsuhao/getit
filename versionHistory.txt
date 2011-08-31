@@ -19,9 +19,14 @@ No longer planned:
 Version History
 ===============
 
+>2011.08.31
+-Reintegrated old changes left out in the last release
+-Updated downloaded AppUpdater to v1.5
+
 >2011.08.30
 -AppSnap is no longer included by default since the repository seems outdated
 -Run 'getit.exe getenginesall' to add AppSnap support
+-Accidently excluded some old changes
 
 >2009.10.20
 -Fixed GUI not being run by Installer (GUI is the one who does the file association to .git files, so if you never ran it yourself, the start-menu install shortcuts wouldn't have worked)

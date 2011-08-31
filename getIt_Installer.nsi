@@ -117,6 +117,7 @@ Section "MainSection" SEC01
   
   CreateDirectory "$SMPROGRAMS\GetIt"
   CreateShortCut "$SMPROGRAMS\GetIt\GetIt GUI.lnk" "$INSTDIR\getit_gui.exe"
+  CreateShortCut "$SMPROGRAMS\GetIt\GetIt - Update Repositories.lnk" "$INSTDIR\getit.exe" "update"
   
   ;Associate protocol
   WriteRegStr HKCR "getit" "" "URL:GetIt"

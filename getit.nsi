@@ -42,6 +42,12 @@ RequestExecutionLevel admin
 !include "FileFunc.nsh" ;only for GetTime
 !insertmacro GetTime
 
+!macro CREATESMINSTALLSC PROG_NAME
+    ;Create shortcut to Install this .git in Start Menu
+    CreateDirectory "$SMPROGRAMS\GetIt\Install Software"
+    CreateShortCut "$SMPROGRAMS\GetIt\Install Software\Install ${PROG_NAME}.lnk" "$EXEDIR\Installs\${PROG_NAME}.git"
+!macroend
+
 ;!include "WinMessages.nsh"
 ;Page directory
 ;Page instfiles
@@ -67,7 +73,6 @@ var curVictimRepositoryFile
 var resultStr
 
 var param_first
-
 Function .onInit
  ;setsilent silent
  SetAutoClose true
@@ -81,7 +86,7 @@ Function .onInit
  delete "$EXEDIR\Installs\*.exe" ;silly installers sometimes end up in there
 
  ${WordFind} $allparams " " "+1" $param_first
- StrCmp $param_first "getengines" param_getengines ; only recommended
+ StrCmp $param_first "getengines" param_getengines
  StrCmp $param_first "getenginesall" param_getengines ; all
  StrCmp $param_first "help" param_help
  ;database aquisition
@@ -163,7 +168,7 @@ Function .onInit
  param_getengines: ; get them ready
   iffileexists "$exedir\portable" 0 +4
     nxs::Destroy
-    messagebox mb_ok "WARNING: Running getengines from a portable GetIt makes it no longer portable. Aborting... If you really want to make this copy of GetIt unportable, please delete the file named 'portable'."
+    messagebox mb_ok "WARNING: Running getengines from a portable GetIt makes it no longer portable. Aborting... If you really want to make this copy of GetIt unportable, please delete the file named 'portable' first."
     goto zend
  
   strcpy $resultStr ""
@@ -173,51 +178,6 @@ Function .onInit
    FileOpen $preferenceFile "$EXEDIR\preference.txt" w ;deletes contents and start writing
    iferrors badPreferenceFile
 
-
-;;Appupdater
-   getengines_appupdater_start:
-   nxs::Update /NOUNLOAD /sub "$\r$\n$\r$\n Looking for Appupdater..." /pos 1 /end
-   ;check if Appupdater is installed
-   ;C:\Program Files\AppSnap\uninst.exe
-   ReadRegStr $curEnginePath HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Appupdater" "InstallLocation"
-    strcmp $curEnginePath "" getengines_NoAppupdater ;if not installed
-     ${WordFind} $curEnginePath '"' "+1" $curEnginePath ; path is now actually the path
-     writeinistr "$EXEDIR\Engine\Appupdater.ini" "General" "InstallPath" "$curEnginePath"
-     FileWrite $preferenceFile "Appupdater$\r$\n"
-     strcpy $resultStr "$resultStrAppupdater$\r$\n" ;result += Appupdater+NewLine
-     ;make batch file in Appupdater dir for easying post-app Pausing
-     clearerrors
-     FileOpen $7 "$curEnginePath\git_appupdater_update.bat" w ;overwrite, make Appupdater Booter ;cd /d %~dp0
-     ;FileWrite $7 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --update -q ...$\r$\ncd "$curEnginePath"$\r$\nappupdater.exe --update -q$\r$\nappupdater.exe --available %% > applist.txt$\r$\n' ;PAUSE
-     FileWrite $7 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --update -q ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --update -q$\r$\nappupdater.exe --available %% > applist.txt$\r$\n' ;PAUSE
-     FileClose $7
-     FileOpen $8 "$curEnginePath\git_appupdater_install.bat" w ;overwrite, make Appupdater Booter
-     FileWrite $8 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --install=%* ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --install=%*$\r$\nPAUSE'
-     FileClose $8
-     FileOpen $8 "$curEnginePath\git_appupdater_installChain.bat" w ;overwrite, make Appupdater Booter
-     FileWrite $8 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --install=%* ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --install=%* > getit_result.txt'
-     FileClose $8
-     FileOpen $9 "$curEnginePath\git_appupdater_upgrade.bat" w ;overwrite, make Appupdater Booter
-     FileWrite $9 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --upgrade ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --update$\r$\nappupdater.exe --upgrade$\r$\nappupdater.exe --upgrade --no-silent$\r$\nPAUSE'
-     FileClose $9
-     iferrors badGenericFile
-    goto getengines_appupdater_done
-
-    getengines_NoAppupdater:
-     nxs::destroy
-     MessageBox MB_OKCANCEL "You don't have Appupdater installed! This severely limits your choice of applications.$\r$\n$\r$\nDownload and silently install Appupdater now?$\r$\nOtherwise, please re-run 'GetIt getengines' after you install Appupdater." IDCANCEL getengines_appupdater_done
-     inetc::get /CAPTION "Downloading AppUpdater..." /BANNER "Downloading AppUpdater..." /RESUME "Download failed. Try to resume?" "http://puchisoft.com/GetIt/appupdater-latest.exe" "$PLUGINSDIR\appupdater-latest.exe"
-      Pop $R0 ;Get the return value
-      StrCmp $R0 "OK" +3
-       MessageBox MB_OK "Failed to download ($R0)"
-       goto getengines_NoAppupdater  
-     nxs::Show /NOUNLOAD `${PRODUCT_NAME}` /top `Installing...` /sub `$\r$\n$\r$\n Installing Appupdater...` /h 0 /pos 0 /max 100 /can 0 /end
-     ;Execshell "open" "http://www.nabber.org/projects/appupdater/"
-     execwait '"$PLUGINSDIR\appupdater-latest.exe" /S'
-     sleep 500
-     goto getengines_appupdater_start ;try again, now that is should be installed
-
-    getengines_appupdater_done:
 ;;AppSnap
    getengines_appsnap_start:
    ;SKIP AppSnap unless StrCmp $param_first "getenginesall" was used
@@ -249,11 +209,11 @@ Function .onInit
    
     getengines_NoAppsnap:
      nxs::destroy
-     MessageBox MB_OKCANCEL "You don't have AppSnap installed! Until you install it, 3rd party Repositories will not work, and your choice of applications will be limited.$\r$\n$\r$\nDownload and silently install AppSnap now?$\r$\nOtherwise, please re-run 'GetIt getengines' after you install AppSnap." IDCANCEL getengines_appsnap_done
+     ;MessageBox MB_OKCANCEL "You don't have AppSnap installed! Until you install it, 3rd party Repositories will not work, and your choice of applications will be limited.$\r$\n$\r$\nDownload and silently install AppSnap now?$\r$\nOtherwise, please re-run 'GetIt getengines' after you install AppSnap." IDCANCEL getengines_appsnap_done
      inetc::get /CAPTION "Downloading AppSnap..." /BANNER "Downloading AppSnap..." /RESUME "Download failed. Try to resume?" "http://puchisoft.com/GetIt/appsnap-latest.exe" "$PLUGINSDIR\appsnap-latest.exe"
      Pop $R0 ;Get the return value
       StrCmp $R0 "OK" +3
-       MessageBox MB_OK "Failed to download ($R0)"
+       MessageBox MB_RETRYCANCEL "Failed to download ($R0)" IDCANCEL getengines_appsnap_done
        goto getengines_NoAppsnap 
      nxs::Show /NOUNLOAD `${PRODUCT_NAME}` /top `Installing...` /sub `$\r$\n$\r$\n Installing AppSnap...` /h 0 /pos 0 /max 100 /can 0 /end
      ;Execshell "open" "http://appsnap.genotrance.com/#Download"
@@ -262,7 +222,54 @@ Function .onInit
      KillProcDLL::KillProc "appsnapgui.exe" ;the installer always makes the gui come up, even if silent, let's insta-kill it
      goto getengines_appsnap_start ;check if it worked or not
    
-   getengines_appsnap_done:  
+   getengines_appsnap_done: 
+                  
+;;Appupdater
+   getengines_appupdater_start:
+   nxs::Update /NOUNLOAD /sub "$\r$\n$\r$\n Looking for Appupdater..." /pos 1 /end
+   ;check if Appupdater is installed
+   ;C:\Program Files\AppSnap\uninst.exe
+   ReadRegStr $curEnginePath HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Appupdater" "InstallLocation"
+    strcmp $curEnginePath "" getengines_NoAppupdater ;if not installed
+     ${WordFind} $curEnginePath '"' "+1" $curEnginePath ; path is now actually the path
+     writeinistr "$EXEDIR\Engine\Appupdater.ini" "General" "InstallPath" "$curEnginePath"
+     FileWrite $preferenceFile "Appupdater$\r$\n"
+     strcpy $resultStr "$resultStrAppupdater$\r$\n" ;result += Appupdater+NewLine
+     ;make batch file in Appupdater dir for easying post-app Pausing
+     clearerrors
+     FileOpen $7 "$curEnginePath\git_appupdater_update.bat" w ;overwrite, make Appupdater Booter ;cd /d %~dp0
+     ;FileWrite $7 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --update -q ...$\r$\ncd "$curEnginePath"$\r$\nappupdater.exe --update -q$\r$\nappupdater.exe --available %% > applist.txt$\r$\n' ;PAUSE
+     FileWrite $7 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --update -q ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --update -q$\r$\nappupdater.exe --available %% > applist.txt$\r$\n' ;PAUSE
+     FileClose $7
+     FileOpen $8 "$curEnginePath\git_appupdater_install.bat" w ;overwrite, make Appupdater Booter
+     FileWrite $8 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --install=%* ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --install=%*$\r$\nPAUSE'
+     FileClose $8
+     FileOpen $8 "$curEnginePath\git_appupdater_installChain.bat" w ;overwrite, make Appupdater Booter
+     FileWrite $8 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --install=%* ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --install=%* > getit_result.txt'
+     FileClose $8
+     FileOpen $9 "$curEnginePath\git_appupdater_upgrade.bat" w ;overwrite, make Appupdater Booter
+     FileWrite $9 '@ECHO OFF$\r$\nECHO Running Appupdater.exe --upgrade ...$\r$\ncd /d %~dp0$\r$\nappupdater.exe --update$\r$\nappupdater.exe --upgrade$\r$\nappupdater.exe --upgrade --no-silent$\r$\nPAUSE'
+     FileClose $9
+     iferrors badGenericFile
+    goto getengines_appupdater_done
+
+    getengines_NoAppupdater:
+     nxs::destroy
+     ;MessageBox MB_OKCANCEL "You don't have Appupdater installed! This severely limits your choice of applications.$\r$\n$\r$\nDownload and silently install Appupdater now?$\r$\nOtherwise, please re-run 'GetIt getengines' after you install Appupdater." IDCANCEL getengines_appupdater_done
+     inetc::get /CAPTION "Downloading AppUpdater..." /BANNER "Downloading AppUpdater..." /RESUME "Download failed. Try to resume?" "http://puchisoft.com/GetIt/appupdater-latest.exe" "$PLUGINSDIR\appupdater-latest.exe"
+      Pop $R0 ;Get the return value
+      StrCmp $R0 "OK" +3
+       MessageBox MB_RETRYCANCEL "Failed to download ($R0)" IDCANCEL getengines_appupdater_done
+       goto getengines_NoAppupdater   
+     nxs::Show /NOUNLOAD `${PRODUCT_NAME}` /top `Installing...` /sub `$\r$\n$\r$\n Installing Appupdater...` /h 0 /pos 0 /max 100 /can 0 /end
+     ;Execshell "open" "http://www.nabber.org/projects/appupdater/"
+     execwait '"$PLUGINSDIR\appupdater-latest.exe" /S'
+     sleep 500
+     goto getengines_appupdater_start ;try again, now that is should be installed
+
+    getengines_appupdater_done:
+     
+   
 ;;Win-Get   
    ;set up win-get's location
    ;strcmp $9 "0" getengines_wingetFailed ;we know it failed to download
@@ -275,23 +282,23 @@ Function .onInit
      FileClose $7
      iferrors badGenericFile
    FileClose $preferenceFile
-
+   
    ;Look for FARRv2 and set that up
    ReadRegStr $curEnginePath HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Find and Run Robot_is1" "InstallLocation"
     strcmp $curEnginePath "" getengines_NoFARR ;if not installed
     File "/oname=$curEnginePath\AliasGroups\Installed\GetIt.alias" GetIt.alias
-    strcpy $resultStr '$resultStr$\r$\nInstalled Alias into FindAndRunRobot. You may have to restart FARR before you can use the "install" keyword.$\r$\n'
+    strcpy $resultStr '$resultStr$\r$\nInstalled Alias into Find And Run Robot. You may have to restart FARR before you can use the "install" keyword.$\r$\n'
     goto getengines_alldone
-
+   
    getengines_NoFARR:
-    strcpy $resultStr "$resultStr$\r$\nGetIt supports FindAndRunRobot, but it wasn't found. If you want support for that, please install it before running this again.$\r$\n"
+    strcpy $resultStr "$resultStr$\r$\nFind And Run Robot wasn't found. Run this again if get it later.$\r$\n"
     goto getengines_alldone
-
+   
    getengines_alldone:
     nxs::destroy
-    MessageBox MB_OK "GetIt found and will use these engines:$\r$\n$resultStr $\r$\n Feel free to change the order of engines in the preference.txt file. The repositories will now be updated."
+    ;MessageBox MB_OK "GetIt found and will use these engines:$\r$\n$resultStr $\r$\n Feel free to change the order of engines in the preference.txt file. The repositories will now be updated."
   goto param_updatedb ;App-Getting engines just changed, you basically need to update the DB, so let's
-
+ 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;; Data Base Aquisition ;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -386,6 +393,8 @@ Function .onInit
     strcmp $4 "" 0 updatedb_rep_lookForGroup ;if not blank, ignore this app...it's already been injected
     writeinistr "$EXEDIR\Installs\$curAppName.git" "$curEngineName" "FromRepository" "$curRepositoryURL"
     
+    !insertmacro CREATESMINSTALLSC $curAppName  
+    
      ;THIS is where you want to actually copy shit over
      ;copy over the group
       FileWrite $curVictimRepositoryFile "[$curAppName]$\r$\n"
@@ -477,6 +486,8 @@ Function .onInit
      writeinistr "$EXEDIR\Installs\$curDBLine.git" "GIT" "MinVer" "${VERSION_INT}"
      writeinistr "$EXEDIR\Installs\$curDBLine.git" "GIT" "Type" "AppPointer"
      writeinistr "$EXEDIR\Installs\$curDBLine.git" "AppSnap" "Name" "$curDBLine"
+     !insertmacro CREATESMINSTALLSC $curDBLine
+     
      goto param_importDBappsnap_next
   
   param_importDBappsnap_done:
@@ -503,6 +514,7 @@ Function .onInit
      writeinistr "$EXEDIR\Installs\$curDBLine.git" "GIT" "MinVer" "${VERSION_INT}"
      writeinistr "$EXEDIR\Installs\$curDBLine.git" "GIT" "Type" "AppPointer"
      writeinistr "$EXEDIR\Installs\$curDBLine.git" "Win-Get" "Name" "$curDBLine"
+     !insertmacro CREATESMINSTALLSC $curDBLine
      goto param_importDBwinget_next
 
   param_importDBwinget_done:
@@ -530,6 +542,7 @@ Function .onInit
      writeinistr "$EXEDIR\Installs\$curDBLine.git" "Appupdater" "Name" "$curDBLine"
      strcmp $1 "*" 0 +2
             writeinistr "$EXEDIR\Installs\$curDBLine.git" "Appupdater" "ExtraParam" "--no-silent"
+     !insertmacro CREATESMINSTALLSC $curDBLine
      goto param_importDBappupdater_next
 
   param_importDBappupdater_done:

@@ -3,5 +3,5 @@ MinVer=31
 Type=Repositories
 [Repositories]
 0=AppSnap"C:\Path\To\Local\Repository.ini"
-1=AppSnap"http://domain/path/to/repository.ini"
-2=AppSnap"http://puchisoft.com/GetIt/Repository.ini"
+1=AppSnap"http://puchisoft.com/GetIt/Repository.ini"
+2=AppSnap"http://puchisoft.com/gloriouscomputing/Repository.ini"
